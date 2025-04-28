@@ -11,8 +11,7 @@ from main import app, db
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Config Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
+
 
 
 # Apply proxy fix for proper URL generation
