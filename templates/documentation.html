@@ -335,7 +335,487 @@ def generate_signature(data, secret_key):
                     </div>
                 </section>
                 
-                <!-- More API documentation sections would follow a similar pattern -->
+                <!-- Installment Payments -->
+                <section id="installment" class="api-doc">
+                    <h2>Installment Payments</h2>
+                    
+                    <h3>Installment Plan Inquiry</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/installment/plans
+                    </div>
+                    
+                    <p>Inquire about available installment plans based on the transaction amount.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h3>Installment Payment</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/installment/payment
+                    </div>
+                    
+                    <p>Process an installment payment with the selected plan.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Unique order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                                <tr>
+                                    <td>redirect_url</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>URL to redirect after payment</td>
+                                </tr>
+                                <tr>
+                                    <td>installment_plan</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Selected installment plan (e.g., "3", "6", "10")</td>
+                                </tr>
+                                <tr>
+                                    <td>installment_bank</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Selected bank code (e.g., "KTC", "SCB")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Rabbit Line Pay -->
+                <section id="rabbit-line-pay" class="api-doc">
+                    <h2>Rabbit Line Pay</h2>
+                    
+                    <h3>Rabbit Line Pay Payment</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/rabbit-line-pay/payment
+                    </div>
+                    
+                    <p>Create a payment using Rabbit Line Pay.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Unique order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                                <tr>
+                                    <td>redirect_url</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>URL to redirect after payment</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h3>Pre-Approved Payment</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/rabbit-line-pay/preapproved
+                    </div>
+                    
+                    <p>Process a payment using a pre-approved Rabbit Line Pay token.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Unique order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                                <tr>
+                                    <td>token</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Pre-approved Rabbit Line Pay token</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Internet Banking -->
+                <section id="internet-banking" class="api-doc">
+                    <h2>Internet Banking</h2>
+                    
+                    <h3>Internet Banking Payment</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/banking/payment
+                    </div>
+                    
+                    <p>Create a payment using Internet/Mobile Banking.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Unique order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                                <tr>
+                                    <td>redirect_url</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>URL to redirect after payment</td>
+                                </tr>
+                                <tr>
+                                    <td>bank_code</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Bank code (e.g., "SCB", "KBANK", "BBL")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <h3>Request to Pay</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/banking/request-to-pay
+                    </div>
+                    
+                    <p>Create a request to pay using Source of Fund (SoF).</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Unique order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Currency code (e.g., THB)</td>
+                                </tr>
+                                <tr>
+                                    <td>sof</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Source of Fund (e.g., "SOF_PAOTANG")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Payment Inquiry -->
+                <section id="inquiry" class="api-doc">
+                    <h2>Payment Inquiry</h2>
+                    
+                    <h3>Payment Status Inquiry</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/payment/inquiry
+                    </div>
+                    
+                    <p>Check the status of a payment.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Order identifier to inquire about</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="api-params">
+                        <h4>Response Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>status</td>
+                                    <td>String</td>
+                                    <td>Payment status (e.g., "SUCCESS", "PENDING", "FAILED")</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td>Order identifier</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td>Transaction amount</td>
+                                </tr>
+                                <tr>
+                                    <td>payment_method</td>
+                                    <td>String</td>
+                                    <td>Payment method used</td>
+                                </tr>
+                                <tr>
+                                    <td>payment_channel</td>
+                                    <td>String</td>
+                                    <td>Payment channel used</td>
+                                </tr>
+                                <tr>
+                                    <td>transaction_time</td>
+                                    <td>String</td>
+                                    <td>Transaction timestamp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Void & Refund -->
+                <section id="void-refund" class="api-doc">
+                    <h2>Void & Refund</h2>
+                    
+                    <h3>Void/Refund Payment</h3>
+                    <div class="api-endpoint">
+                        <span class="method">POST</span> /api/payment/void-refund
+                    </div>
+                    
+                    <p>Void or refund a payment.</p>
+                    
+                    <div class="api-params">
+                        <h4>Request Parameters</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Required</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>merchant_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Your merchant ID</td>
+                                </tr>
+                                <tr>
+                                    <td>order_id</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Order identifier to void/refund</td>
+                                </tr>
+                                <tr>
+                                    <td>refund_type</td>
+                                    <td>String</td>
+                                    <td><span class="required">Yes</span></td>
+                                    <td>Type of operation ("VOID" or "REFUND")</td>
+                                </tr>
+                                <tr>
+                                    <td>amount</td>
+                                    <td>Number</td>
+                                    <td>For REFUND only</td>
+                                    <td>Refund amount (required for partial refunds)</td>
+                                </tr>
+                                <tr>
+                                    <td>description</td>
+                                    <td>String</td>
+                                    <td>No</td>
+                                    <td>Description of the void/refund</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
                 
                 <!-- Webhook Notifications -->
                 <section id="webhook" class="api-doc">
