@@ -31,14 +31,8 @@ from api.inquiry import PaymentInquiry
 from api.void_refund import VoidRefund
 from api.webhook import WebhookHandler
 
-# Import merchant API
-from api.merchant import MerchantInfo
-from api.test_transaction import TestTransaction
 
-# Register API endpoints
-# Merchant API
-api.add_resource(MerchantInfo, '/api/merchant/<string:merchant_id>')
-api.add_resource(TestTransaction, '/api/test/transaction', '/api/test/transaction/<string:order_id>')
+
 
 # Credit Card Payment
 api.add_resource(CreditCardPayment, '/api/credit-card/payment')

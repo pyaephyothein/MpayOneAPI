@@ -1,98 +1,57 @@
-import json
 import logging
 from flask import request, jsonify
 from flask_restful import Resource
-from utils.signature import verify_signature
+from utils.signature import generate_signature
+from utils.http_client import make_request
+from config import (
+    MPAY_ONE_BASE_URL, VOID_REFUND_ENDPOINT, ERROR_CODES
+)
 
 logger = logging.getLogger(__name__)
 
-class WebhookHandler(Resource):
-    """Handle Webhook Notifications from mPAY ONE"""
+class VoidRefund(Resource):
+    """Handle Void & Refund API"""
     
     def post(self):
         """
-        Process webhook notifications from mPAY ONE
+        Void or refund a payment
         
-        Expected payload structure varies by payment type, but commonly includes:
+        Expected payload:
         {
             "merchant_id": "MERCHANT_ID",
             "order_id": "ORDER123",
-            "amount": 100.00,
-            "currency": "THB",
-            "payment_id": "PAY123",
-            "status": "SUCCESS",
-            "payment_method": "CREDIT_CARD",
-            "payment_channel": "VISA",
-            "paid_agent": "BANK",
-            "paid_channel": "CC",
-            "transaction_time": "2024-01-01T12:00:00+07:00",
-            "signature": "SIGNATURE"
+            "amount": 100.00,  # For partial refund, not required for full void
+            "description": "Refund for order ORDER123",
+            "refund_type": "REFUND"  # or "VOID"
         }
         """
         try:
-            webhook_data = request.get_json()
+            payload = request.get_json()
             
-            if not webhook_data:
-                logger.error("Empty webhook payload received")
-                return jsonify({"status": "error", "message": "No data received"}), 400
+            # Validate required fields
+            required_fields = ['merchant_id', 'order_id', 'refund_type']
+            for field in required_fields:
+                if field not in payload:
+                    return jsonify({"error": ERROR_CODES["INVALID_REQUEST"], "message": f"Missing required field: {field}"}), 400
             
-            logger.info(f"Received webhook: {json.dumps(webhook_data)}")
+            # If refund type is REFUND, amount is required
+            if payload['refund_type'] == 'REFUND' and 'amount' not in payload:
+                return jsonify({"error": ERROR_CODES["INVALID_REQUEST"], "message": "Amount is required for refund"}), 400
             
-            # Verify signature
-            signature = webhook_data.pop('signature', None)
+            # Generate signature
+            signature = generate_signature(payload)
+            payload['signature'] = signature
             
-            if not signature:
-                logger.error("Webhook signature missing")
-                return jsonify({"status": "error", "message": "Signature missing"}), 400
+            # Make request to mPAY ONE API
+            endpoint = f"{MPAY_ONE_BASE_URL}{VOID_REFUND_ENDPOINT}"
+            response = make_request('POST', endpoint, payload)
             
-            # Verify the signature
-            if not verify_signature(webhook_data, signature):
-                logger.error("Webhook signature verification failed")
-                return jsonify({"status": "error", "message": "Invalid signature"}), 401
-            
-            # Process the webhook based on status
-            status = webhook_data.get('status')
-            payment_method = webhook_data.get('payment_method')
-            order_id = webhook_data.get('order_id')
-            
-            if not all([status, payment_method, order_id]):
-                logger.error("Webhook missing critical fields")
-                return jsonify({"status": "error", "message": "Missing required fields"}), 400
-            
-            # Handle different payment statuses
-            if status == 'SUCCESS':
-                logger.info(f"Payment successful for order {order_id}")
-                # Update your system - payment successful
-                # e.g. update_order_status(order_id, 'paid')
-                
-            elif status == 'PENDING':
-                logger.info(f"Payment pending for order {order_id}")
-                # Update your system - payment is being processed
-                # e.g. update_order_status(order_id, 'pending')
-                
-            elif status == 'FAILED':
-                logger.info(f"Payment failed for order {order_id}")
-                # Update your system - payment failed
-                # e.g. update_order_status(order_id, 'failed')
-                
-            elif status == 'AUTHORIZED':
-                logger.info(f"Payment authorized for order {order_id}")
-                # Update your system - payment authorized but not captured
-                # e.g. update_order_status(order_id, 'authorized')
-                
-            elif status == 'CANCELED':
-                logger.info(f"Payment canceled for order {order_id}")
-                # Update your system - payment was canceled
-                # e.g. update_order_status(order_id, 'canceled')
-                
+            if response.status_code == 200:
+                return response.json(), 200
             else:
-                logger.warning(f"Unknown payment status: {status} for order {order_id}")
-                # Handle unknown status
-            
-            # Always return 200 OK to acknowledge receipt
-            return jsonify({"status": "success", "message": "Webhook received"}), 200
-            
+                logger.error(f"Void/refund failed: {response.text}")
+                return jsonify({"error": ERROR_CODES["PAYMENT_FAILED"], "message": response.text}), response.status_code
+                
         except Exception as e:
-            logger.exception("Error processing webhook")
-            # Still return 200 to prevent redelivery, but log the error
-            return jsonify({"status": "error", "message": str(e)}), 200
+            logger.exception("Error processing void/refund")
+            return jsonify({"error": ERROR_CODES["SYSTEM_ERROR"], "message": str(e)}), 500
