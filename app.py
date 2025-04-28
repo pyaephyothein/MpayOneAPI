@@ -1,7 +1,9 @@
 import os
 import logging
-from flask import Flask
+from datetime import datetime
+from flask import Flask, render_template, jsonify
 from flask_restful import Api
+from flask_weasyprint import HTML, render_pdf
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Configure logging
@@ -69,31 +71,28 @@ api.add_resource(WebhookHandler, '/api/webhook')
 # Web routes
 @app.route('/')
 def index():
-    from flask import render_template
     return render_template('index.html')
 
 @app.route('/documentation')
 def documentation():
-    from flask import render_template
     return render_template('documentation.html')
 
 @app.route('/payment-form')
 def payment_form():
-    from flask import render_template
     return render_template('payment_form.html')
+
+@app.route('/download-report-pdf')
+def download_report_pdf():
+    # Generate PDF report
+    html = render_template('report_pdf.html', now=datetime.now())
+    return render_pdf(HTML(string=html), download_filename="mPAY_ONE_Project_Report.pdf")
 
 # Error handlers
 @app.errorhandler(404)
 def page_not_found(e):
-    from flask import render_template
     return render_template('index.html'), 404
 
 @app.errorhandler(500)
 def server_error(e):
     logger.error(f"Server error: {str(e)}")
-    from flask import jsonify
     return jsonify({"error": "Internal server error", "message": str(e)}), 500
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)

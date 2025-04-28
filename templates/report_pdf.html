@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mPAY ONE API Implementation - Project Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: #333;
+        }
+        h1 {
+            color: #1D3557;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1D3557;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #1D3557;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #457B9D;
+        }
+        h4 {
+            color: #666;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Monaco, Consolas, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        code {
+            font-family: Monaco, Consolas, "Courier New", monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        ul, ol {
+            margin: 1em 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>mPAY ONE API Implementation</h1>
+        <p>Project Report Documentation</p>
+        <p>Generated on: {{ now.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    </div>
+    
+    <div class="section">
+        <h2>Project Overview</h2>
+        <p>
+            This report provides a comprehensive overview of the mPAY ONE API integration project,
+            including the project structure, implementation details, and code explanations.
+            The project implements a complete payment gateway integration with multiple payment methods
+            and secure transaction processing.
+        </p>
+    </div>
+    
+    <div class="section">
+        <h2>Project Structure</h2>
+        <pre><code>
+├── api/                     # API endpoint implementations
+│   ├── __init__.py          # API package initialization
+│   ├── credit_card.py       # Credit card payment APIs
+│   ├── installment.py       # Installment payment APIs
+│   ├── internet_banking.py  # Internet/mobile banking APIs
+│   ├── inquiry.py           # Payment inquiry APIs
+│   ├── qr_payment.py        # QR payment generation APIs
+│   ├── rabbit_line_pay.py   # Rabbit Line Pay APIs
+│   ├── void_refund.py       # Void and refund APIs
+│   └── webhook.py           # Webhook handling APIs
+├── static/                  # Static assets
+│   ├── css/                 # CSS stylesheets
+│   │   └── custom.css       # Custom styles for the application
+│   └── js/                  # JavaScript files
+│       └── script.js        # Main JavaScript functionality
+├── templates/               # HTML templates
+│   ├── index.html           # Homepage template
+│   ├── documentation.html   # API documentation template
+│   └── payment_form.html    # Payment form template
+├── utils/                   # Utility modules
+│   ├── __init__.py          # Utils package initialization
+│   ├── http_client.py       # HTTP client for API requests
+│   └── signature.py         # Signature generation and verification
+├── config.py                # Configuration settings
+├── app.py                   # Flask application routes
+└── main.py                  # Application entry point
+        </code></pre>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="section">
+        <h2>Implementation Details</h2>
+        
+        <h3>1. API Modules</h3>
+        <p>
+            Each API endpoint is implemented as a Flask-RESTful Resource class in dedicated modules within the <code>api/</code> directory.
+            These classes handle HTTP requests, validate input data, generate signatures, and communicate with the mPAY ONE payment gateway.
+        </p>
+        
+        <div class="card">
+            <div class="card-header">
+                Example: Credit Card Payment Implementation
+            </div>
+            <div class="card-body">
+                <pre><code>
+class CreditCardPayment(Resource):
+    """Handle Credit Card Payment Order API"""
+    
+    def post(self):
+        """Create a credit card payment order"""
+        try:
+            payload = request.get_json()
+            
+            # Validate required fields
+            required_fields = ['merchant_id', 'order_id', 'amount', 'currency', 'redirect_url']
+            for field in required_fields:
+                if field not in payload:
+                    return jsonify({"error": ERROR_CODES["INVALID_REQUEST"], "message": f"Missing required field: {field}"}), 400
+            
+            # Generate signature
+            signature = generate_signature(payload)
+            payload['signature'] = signature
+            
+            # Make request to mPAY ONE API
+            endpoint = f"{MPAY_ONE_BASE_URL}{CREDIT_CARD_PAYMENT_ENDPOINT}"
+            response = make_request('POST', endpoint, payload)
+            
+            if response.status_code == 200:
+                return response.json(), 200
+            else:
+                logger.error(f"Credit card payment failed: {response.text}")
+                return jsonify({"error": ERROR_CODES["PAYMENT_FAILED"], "message": response.text}), response.status_code
+                
+        except Exception as e:
+            logger.exception("Error processing credit card payment")
+            return jsonify({"error": ERROR_CODES["SYSTEM_ERROR"], "message": str(e)}), 500
+                </code></pre>
+            </div>
+        </div>
+        
+        <h3>2. Authentication and Security</h3>
+        <p>
+            The integration uses HMAC SHA-256 signatures for securing API requests and verifying webhook notifications.
+            Signatures are generated based on the request payload and a secret key.
+        </p>
+        
+        <div class="card">
+            <div class="card-header">
+                Signature Generation Implementation
+            </div>
+            <div class="card-body">
+                <pre><code>
+def generate_signature(data):
+    """
+    Generate HMAC signature for the request payload
+    
+    Args:
+        data (dict): Payload data to sign
+        
+    Returns:
+        str: The hexadecimal signature string
+    """
+    try:
+        # Sort the payload keys alphabetically
+        sorted_data = {k: data[k] for k in sorted(data.keys())}
+        
+        # Convert payload to JSON string
+        payload_string = json.dumps(sorted_data, separators=(',', ':'))
+        
+        # Create HMAC with SHA-256
+        signature = hmac.new(
+            MPAY_SECRET_KEY.encode('utf-8'),
+            payload_string.encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+        
+        return signature
+    
+    except Exception as e:
+        logger.exception(f"Error generating signature: {str(e)}")
+        raise
+                </code></pre>
+            </div>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <h3>3. HTTP Client</h3>
+        <p>
+            A custom HTTP client handles communication with the mPAY ONE API, managing request formatting,
+            error handling, and response processing.
+        </p>
+        
+        <div class="card">
+            <div class="card-header">
+                HTTP Client Implementation
+            </div>
+            <div class="card-body">
+                <pre><code>
+def make_request(method, url, data=None, headers=None, timeout=30):
+    """
+    Make HTTP request to mPAY ONE API
+    
+    Args:
+        method (str): HTTP method (GET, POST, PUT, DELETE)
+        url (str): Request URL
+        data (dict, optional): Request payload
+        headers (dict, optional): Request headers
+        timeout (int, optional): Request timeout in seconds
+        
+    Returns:
+        requests.Response: Response object
+    
+    Raises:
+        RequestException: If request fails
+    """
+    if headers is None:
+        headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    
+    try:
+        logger.debug(f"Making {method} request to {url}")
+        response = requests.request(
+            method=method,
+            url=url,
+            json=data,
+            headers=headers,
+            timeout=timeout
+        )
+        
+        # Return the response even if status code indicates error
+        return response
+    
+    except RequestException as e:
+        logger.error(f"HTTP request failed: {str(e)}")
+        
+        if hasattr(e, 'response') and e.response is not None:
+            return e.response
+        
+        # Re-raise the exception if no response
+        raise
+                </code></pre>
+            </div>
+        </div>
+        
+        <h3>4. Webhook Handling</h3>
+        <p>
+            The system processes webhook notifications from mPAY ONE to receive real-time payment status updates.
+            Webhooks are validated using signature verification to ensure their authenticity.
+        </p>
+        
+        <div class="card">
+            <div class="card-header">
+                Webhook Handler Implementation
+            </div>
+            <div class="card-body">
+                <pre><code>
+class WebhookHandler(Resource):
+    """Handle Webhook Notifications from mPAY ONE"""
+    
+    def post(self):
+        """Process webhook notifications from mPAY ONE"""
+        try:
+            webhook_data = request.get_json()
+            
+            if not webhook_data:
+                logger.error("Empty webhook payload received")
+                return jsonify({"status": "error", "message": "No data received"}), 400
+            
+            # Verify signature
+            signature = webhook_data.pop('signature', None)
+            
+            if not signature:
+                logger.error("Webhook signature missing")
+                return jsonify({"status": "error", "message": "Signature missing"}), 400
+            
+            # Verify the signature
+            if not verify_signature(webhook_data, signature):
+                logger.error("Webhook signature verification failed")
+                return jsonify({"status": "error", "message": "Invalid signature"}), 401
+            
+            # Process the webhook based on status
+            status = webhook_data.get('status')
+            order_id = webhook_data.get('order_id')
+            
+            # Update your system based on payment status
+            if status == 'SUCCESS':
+                logger.info(f"Payment successful for order {order_id}")
+                # Update order status to paid
+                
+            elif status == 'PENDING':
+                logger.info(f"Payment pending for order {order_id}")
+                # Update order status to pending
+                
+            elif status == 'FAILED':
+                logger.info(f"Payment failed for order {order_id}")
+                # Update order status to failed
+            
+            # Always return 200 OK to acknowledge receipt
+            return jsonify({"status": "success", "message": "Webhook received"}), 200
+            
+        except Exception as e:
+            logger.exception("Error processing webhook")
+            # Still return 200 to prevent redelivery, but log the error
+            return jsonify({"status": "error", "message": str(e)}), 200
+                </code></pre>
+            </div>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <h3>5. Frontend Integration</h3>
+        <p>
+            The frontend provides a user-friendly interface for initiating payments, selecting payment methods,
+            and viewing transaction details. It communicates with the backend API to process payments and display results.
+        </p>
+    </div>
+    
+    <div class="section">
+        <h2>Configuration Settings</h2>
+        <p>
+            The application uses a central configuration file (<code>config.py</code>) to manage API endpoints,
+            secret keys, error codes, and other settings. This centralized approach allows for easy updates and maintenance.
+        </p>
+        
+        <div class="card">
+            <div class="card-header">
+                Configuration Example
+            </div>
+            <div class="card-body">
+                <pre><code>
+# mPAY ONE API configuration
+MPAY_ONE_BASE_URL = "https://api.mpayone.com/v4"
+MPAY_SECRET_KEY = os.environ.get("MPAY_SECRET_KEY", "your_secret_key_here")
+
+# API endpoints
+CREDIT_CARD_PAYMENT_ENDPOINT = "/payment/credit-card"
+QR_PAYMENT_ENDPOINT = "/payment/qr-code"
+INSTALLMENT_PAYMENT_ENDPOINT = "/payment/installment"
+RABBIT_LINE_PAY_ENDPOINT = "/payment/rabbit-line-pay"
+INTERNET_BANKING_ENDPOINT = "/payment/internet-banking"
+PAYMENT_INQUIRY_ENDPOINT = "/payment/inquiry"
+VOID_REFUND_ENDPOINT = "/payment/void-refund"
+
+# Error codes
+ERROR_CODES = {
+    "INVALID_REQUEST": "E001",
+    "AUTHENTICATION_FAILED": "E002",
+    "PAYMENT_FAILED": "E003",
+    "RESOURCE_NOT_FOUND": "E004",
+    "SYSTEM_ERROR": "E999"
+}
+                </code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Testing and Integration</h2>
+        <p>
+            To test the integration with mPAY ONE, follow these steps:
+        </p>
+        
+        <ol>
+            <li>
+                <strong>Set up your environment:</strong> Configure your merchant ID and secret key in your environment variables or configuration file.
+            </li>
+            <li>
+                <strong>Test API endpoints:</strong> Use the payment form provided in this implementation to test different payment methods.
+            </li>
+            <li>
+                <strong>Configure webhooks:</strong> Set up a publicly accessible URL for receiving webhook notifications and configure it in your mPAY ONE merchant dashboard.
+            </li>
+            <li>
+                <strong>Monitor transactions:</strong> Use the payment inquiry API to check transaction status and monitor webhook notifications for real-time updates.
+            </li>
+        </ol>
+    </div>
+    
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li>
+                <strong>Security:</strong> Always validate signatures on incoming webhook notifications and never expose your secret key in client-side code.
+            </li>
+            <li>
+                <strong>Error handling:</strong> Implement comprehensive error handling to provide clear feedback to users when payments fail.
+            </li>
+            <li>
+                <strong>Logging:</strong> Maintain detailed logs of all API requests, responses, and webhook notifications for troubleshooting and auditing.
+            </li>
+            <li>
+                <strong>Idempotency:</strong> Ensure that payment operations can safely be retried without creating duplicate transactions by using unique order IDs.
+            </li>
+            <li>
+                <strong>Testing:</strong> Thoroughly test the integration in a sandbox environment before going live with real transactions.
+            </li>
+        </ul>
+    </div>
+    
+    <div class="footer">
+        <p>mPAY ONE API Implementation Documentation &copy; {{ now.strftime('%Y') }}</p>
+    </div>
+</body>
+</html>
