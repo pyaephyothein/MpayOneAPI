@@ -1,52 +1,71 @@
 import os
 
-# Database connection
-DATABASE_URL = os.environ.get("DATABASE_URL")
+# mPAY ONE API Endpoints
+MPAY_ONE_BASE_URL = os.environ.get("MPAY_ONE_BASE_URL", "https://api-sandbox.mpay.one")
 
-# API configuration
-MPAY_ONE_BASE_URL = "https://api.mpayone.com/v1"
-MPAY_SECRET_KEY = os.environ.get("MPAY_SECRET_KEY", "test_secret_key")
+# API Endpoints
+CREDIT_CARD_PAYMENT_ENDPOINT = "/api/v4/payment/cc"
+CREDIT_CARD_TOKEN_PAYMENT_ENDPOINT = "/api/v4/payment/cc/token"
+CREDIT_CARD_TOKEN_INQUIRY_ENDPOINT = "/api/v4/payment/cc/token/inquiry"
+CREDIT_CARD_TOKEN_TERMINATE_ENDPOINT = "/api/v4/payment/cc/token/terminate"
+CREDIT_CARD_CAPTURE_ENDPOINT = "/api/v4/payment/cc/capture"
+CREDIT_CARD_CANCEL_ENDPOINT = "/api/v4/payment/cc/cancel"
 
-# API endpoints
-CREDIT_CARD_PAYMENT_ENDPOINT = "/payment/credit-card"
-CREDIT_CARD_TOKEN_PAYMENT_ENDPOINT = "/payment/credit-card/token"
-CREDIT_CARD_TOKEN_INQUIRY_ENDPOINT = "/inquiry/token"
-CREDIT_CARD_TOKEN_TERMINATE_ENDPOINT = "/terminate/token"
-CREDIT_CARD_CAPTURE_ENDPOINT = "/payment/capture"
-CREDIT_CARD_CANCEL_ENDPOINT = "/payment/cancel"
-CREDIT_CARD_SEAMLESS_PAYMENT_ENDPOINT = "/payment/credit-card/seamless"
-CREDIT_CARD_SEAMLESS_REGISTER_ENDPOINT = "/payment/credit-card/register"
-CREDIT_CARD_SEAMLESS_CONFIRM_ENDPOINT = "/payment/confirm"
+CREDIT_CARD_SEAMLESS_PAYMENT_ENDPOINT = "/api/v4/payment/cc/seamless"
+CREDIT_CARD_SEAMLESS_REGISTER_ENDPOINT = "/api/v4/payment/cc/seamless/register"
+CREDIT_CARD_SEAMLESS_CONFIRM_ENDPOINT = "/api/v4/payment/cc/seamless/confirm"
 
-# Alternative naming (for potential legacy code)
-CARD_TOKENIZATION_ENDPOINT = "/payment/credit-card/token"
-CARD_TOKEN_INQUIRY_ENDPOINT = "/inquiry/token"
-TERMINATE_CARD_TOKEN_ENDPOINT = "/terminate/token"
-CAPTURE_AUTHORIZED_ENDPOINT = "/payment/capture"
-CANCEL_AUTHORIZED_ENDPOINT = "/payment/cancel"
-CREDIT_CARD_SEAMLESS_ENDPOINT = "/payment/credit-card/seamless"
-REGISTER_CARD_ENDPOINT = "/payment/credit-card/register"
-PAYMENT_CONFIRM_ENDPOINT = "/payment/confirm"
-INSTALLMENT_PLAN_INQUIRY_ENDPOINT = "/inquiry/installment-plan"
-INSTALLMENT_PAYMENT_ENDPOINT = "/payment/installment"
-RABBIT_LINE_PAY_ENDPOINT = "/payment/rabbit-line-pay"
-RLP_PAYMENT_ENDPOINT = "/payment/rabbit-line-pay"
-PREAPPROVED_PAYMENT_ENDPOINT = "/payment/preapproved"
-RLP_PREAPPROVED_PAYMENT_ENDPOINT = "/payment/preapproved"
-TERMINATE_RLP_TOKEN_ENDPOINT = "/terminate/rabbit-line-pay/token"
-RLP_TOKEN_TERMINATE_ENDPOINT = "/terminate/rabbit-line-pay/token"
-GENERATE_QR_ENDPOINT = "/payment/qr"
-QR_GENERATE_ENDPOINT = "/payment/qr"
-INTERNET_BANKING_ENDPOINT = "/payment/internet-banking"
-REQUEST_TO_PAY_ENDPOINT = "/payment/request-to-pay"
-PAYMENT_INQUIRY_ENDPOINT = "/inquiry/payment"
-VOID_REFUND_ENDPOINT = "/payment/void-refund"
+INSTALLMENT_PLAN_INQUIRY_ENDPOINT = "/api/v4/payment/installment/plan"
+INSTALLMENT_PAYMENT_ENDPOINT = "/api/v4/payment/installment"
 
-# Error codes
+RLP_PAYMENT_ENDPOINT = "/api/v4/payment/rlp"
+RLP_PREAPPROVED_PAYMENT_ENDPOINT = "/api/v4/payment/rlp/preapproved"
+RLP_TOKEN_TERMINATE_ENDPOINT = "/api/v4/payment/rlp/terminate"
+
+QR_GENERATE_ENDPOINT = "/api/v4/payment/qr/generate"
+
+INTERNET_BANKING_ENDPOINT = "/api/v4/payment/ib"
+REQUEST_TO_PAY_ENDPOINT = "/api/v4/payment/rtp"
+
+PAYMENT_INQUIRY_ENDPOINT = "/api/v4/payment/inquiry"
+VOID_REFUND_ENDPOINT = "/api/v4/payment/void-refund"
+
+# API Authentication
+MPAY_MERCHANT_ID = os.environ.get("MPAY_MERCHANT_ID", "")
+MPAY_SECRET_KEY = os.environ.get("MPAY_SECRET_KEY", "")
+
+# Webhook settings
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL", "https://your-domain.com/api/webhook")
+
+# Payment settings
+CURRENCY = "THB"
+COUNTRY = "TH"
+
+# Response status codes
+STATUS_SUCCESS = "SUCCESS"
+STATUS_PENDING = "PENDING"
+STATUS_FAILED = "FAILED"
+STATUS_AUTHORIZED = "AUTHORIZED"
+STATUS_CANCELED = "CANCELED"
+
+# Payment methods
+PAYMENT_METHODS = {
+    "CREDIT_CARD": "Credit Card",
+    "INSTALLMENT": "Installment",
+    "QR_PAYMENT": "QR Payment",
+    "RLP": "Rabbit Line Pay",
+    "INTERNET_BANKING": "Internet Banking",
+    "SOF_BIH": "BIH Wallet",
+    "SOF_SHOPEEPAY": "ShopeePay",
+    "SOF_PAOTANG": "Paotang"
+}
+
+# Error codes and messages
 ERROR_CODES = {
-    "INVALID_REQUEST": "INVALID_REQUEST",
-    "PAYMENT_FAILED": "PAYMENT_FAILED",
-    "SYSTEM_ERROR": "SYSTEM_ERROR",
-    "INVALID_SIGNATURE": "INVALID_SIGNATURE",
-    "RESOURCE_NOT_FOUND": "RESOURCE_NOT_FOUND"
+    "INVALID_REQUEST": "Invalid request parameters",
+    "AUTHENTICATION_FAILED": "Authentication failed",
+    "SIGNATURE_MISMATCH": "Signature verification failed",
+    "PAYMENT_FAILED": "Payment processing failed",
+    "RESOURCE_NOT_FOUND": "Requested resource not found",
+    "SYSTEM_ERROR": "System error occurred"
 }

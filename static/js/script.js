@@ -222,8 +222,8 @@ function showQRCode(qrImageData) {
  */
 function showSuccessMessage(message) {
     const alertContainer = document.getElementById('alert-container');
-    if (!alertContainer)
-        return;
+    if (!alertContainer) return;
+    
     alertContainer.innerHTML = `
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             ${message}
@@ -232,7 +232,6 @@ function showSuccessMessage(message) {
     `;
     
     // Scroll to alert
-    alertContainer.scrollIntoView({ behavior: 'smooth' });
     if (alertContainer.scrollIntoView) {
         alertContainer.scrollIntoView({ behavior: 'smooth' });
     }
@@ -243,6 +242,8 @@ function showSuccessMessage(message) {
  */
 function showErrorMessage(message) {
     const alertContainer = document.getElementById('alert-container');
+    if (!alertContainer) return;
+    
     alertContainer.innerHTML = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             ${message}
@@ -251,7 +252,9 @@ function showErrorMessage(message) {
     `;
     
     // Scroll to alert
-    alertContainer.scrollIntoView({ behavior: 'smooth' });
+    if (alertContainer.scrollIntoView) {
+        alertContainer.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 /**
