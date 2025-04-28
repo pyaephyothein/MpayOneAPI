@@ -106,6 +106,3 @@ def page_not_found(e):
 def server_error(e):
     logger.error(f"Server error: {str(e)}")
     return jsonify({"error": "Internal server error", "message": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
