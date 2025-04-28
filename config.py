@@ -1,7 +1,7 @@
 import os
 
 # Database connection
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL","sqlite:///mpayone.db")
 
 # API configuration
 MPAY_ONE_BASE_URL = "https://api.mpayone.com/v1"
