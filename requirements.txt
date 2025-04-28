@@ -6,7 +6,7 @@ cffi==1.17.1
 charset-normalizer==3.4.1
 click==8.1.8
 cssselect2==0.8.0
-dnspython @ file:///home/conda/feedstock_root/build_artifacts/dnspython_1733256735222/work
+dnspython==2.7.0
 email_validator @ file:///home/conda/feedstock_root/build_artifacts/email-validator-meta_1733300719943/work
 Flask==3.1.0
 Flask-RESTful==0.3.10
