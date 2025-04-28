@@ -1,18 +1,17 @@
 import os
 import logging
 from datetime import datetime
-from flask import Flask, render_template, jsonify
+from flask import render_template, jsonify
 from flask_restful import Api
 from flask_weasyprint import HTML, render_pdf
 from werkzeug.middleware.proxy_fix import ProxyFix
+from main import app, db
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Create Flask app
-app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "mpay_one_secret_key")
+# Apply proxy fix for proper URL generation
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Initialize REST API
@@ -29,7 +28,15 @@ from api.inquiry import PaymentInquiry
 from api.void_refund import VoidRefund
 from api.webhook import WebhookHandler
 
+# Import merchant API
+from api.merchant import MerchantInfo
+from api.test_transaction import TestTransaction
+
 # Register API endpoints
+# Merchant API
+api.add_resource(MerchantInfo, '/api/merchant/<string:merchant_id>')
+api.add_resource(TestTransaction, '/api/test/transaction', '/api/test/transaction/<string:order_id>')
+
 # Credit Card Payment
 api.add_resource(CreditCardPayment, '/api/credit-card/payment')
 api.add_resource(CardTokenization, '/api/credit-card/payment-token')
@@ -96,7 +103,3 @@ def page_not_found(e):
 def server_error(e):
     logger.error(f"Server error: {str(e)}")
     return jsonify({"error": "Internal server error", "message": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
